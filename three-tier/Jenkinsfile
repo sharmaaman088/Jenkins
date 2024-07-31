@@ -1,0 +1,38 @@
+pipeline {
+  agent none
+  stages {
+    stage('Back-end') {
+      agent {
+        docker { image 'maven:3.8.1-adoptopenjdk-11' }
+      }
+      steps {
+        sh 'mvn --version'
+      }
+    }
+    stage('Front-end') {
+      agent {
+        docker { image 'node:16-alpine' }
+      }
+      steps {
+        sh 'node --version'
+      }
+    }
+    stage('Database') {
+      agent {
+        docker { image 'mysql:latest' }
+      }
+      environment {
+        MYSQL_ROOT_PASSWORD = 'rootpassword'
+        MYSQL_DATABASE = 'exampledb'
+      }
+      steps {
+        script {
+          sh 'echo "Starting MySQL container..."'
+          sh 'mysql --version'
+          // You can add commands here to interact with the database
+          // For example, you might run SQL scripts or connect to the database
+        }
+      }
+    }
+  }
+}
